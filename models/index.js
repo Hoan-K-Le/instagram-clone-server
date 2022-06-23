@@ -15,3 +15,7 @@ db.once('open', () => {
 db.on('error', err => {
   console.error('Data is not working 😭', err)
 })
+
+module.exports = {
+  User: require('./user'),
+}

@@ -3,17 +3,16 @@ require('dotenv').config()
 require('./models')
 const express = require('express')
 const cors = require('cors')
-// multer, formdata, cloudinary
-const multer = require('multer')
-const cloudinary = require('cloudinary').v2
-const path = require('path')
-const { unlinkSync } = require('fs')
 
 // app config/middleware
 const app = express()
 const PORT = process.env.PORT || 8000
 app.use(cors())
 app.use(express.json()) // json req.bodies
+app.use(express.static('uploads'))
+
+// config for multer
+// const uploads = multer({ dest: 'uploads/' })
 
 // simple middleware
 // app.use((req, res, next) => {
@@ -33,7 +32,7 @@ const myMiddleware = (req, res, next) => {
 // routes and controllers
 app.get('/', myMiddleware, (req, res) => {
   res.json({ msg: 'Welcome back beech!' })
-  console.log(res.locals.myData)
+  // console.log(res.locals.myData)
 })
 
 // cloudinary boilerplate for posting multi part form data images
@@ -48,6 +47,7 @@ app.get('/', myMiddleware, (req, res) => {
 // })
 
 app.use('/api-v1/users', require('./controllers/api-v1/users'))
+
 // listen on a port
 app.listen(PORT, () => {
   console.log(`server running on ${PORT}`)

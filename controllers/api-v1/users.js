@@ -3,6 +3,12 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 const authLockedRoute = require('./authLockedRoute')
+const multer = require('multer')
+const cloudinary = require('cloudinary').v2
+const path = require('path')
+const { unlinkSync } = require('fs')
+// config multer -- tell it about the static folder
+const uploads = multer({ dest: 'uploads/' })
 
 // POST /users/register -- CREATE a new user
 router.post('/register', async (req, res) => {
@@ -107,6 +113,25 @@ router.post('/login', async (req, res) => {
 router.get('/auth-locked', authLockedRoute, (req, res) => {
   console.table(res.locals.user)
   res.json({ msg: 'welcome to the secret auth-locked route' })
+})
+
+// upload data
+router.post('/', uploads.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ msg: 'no file uploaded' })
+    // upload to cloudinary
+    const cloudImageData = await cloudinary.uploader.upload(req.file.path)
+    // png that can be manipulated
+    const cloudImage = `https://res.cloudinary.com/dshcawt4j/image/upload/v1593119998/${cloudImageData.public_id}.png`
+    // delete the file so it doesnt clutter up the server folder
+    unlinkSync(req.file.path)
+    // save url to db
+
+    res.json({ cloudImage })
+  } catch (err) {
+    console.warn(err)
+    res.status.json(503).json({ msg: 'you should look at the server console.' })
+  }
 })
 
 module.exports = router

@@ -3,6 +3,11 @@ require('dotenv').config()
 require('./models')
 const express = require('express')
 const cors = require('cors')
+// multer, formdata, cloudinary
+const multer = require('multer')
+const cloudinary = require('cloudinary').v2
+const path = require('path')
+const { unlinkSync } = require('fs')
 
 // app config/middleware
 const app = express()
@@ -30,6 +35,17 @@ app.get('/', myMiddleware, (req, res) => {
   res.json({ msg: 'Welcome back beech!' })
   console.log(res.locals.myData)
 })
+
+// cloudinary boilerplate for posting multi part form data images
+// app.post('/images', uploads.single('image'), async (req, res) => {
+//   if (!req.file) return res.status.(400).json({ msg: 'no file uploaded! ' })
+//   const cloudImageData = await cloudinary.uploader.upload(req.file.path)
+//   console.log(cloudImageData)
+//   const cloudinaryUrl = `https://res.cloudinary.com/dkchpbore/image/upload/v1593119998/${cloudImageData.public_id}.png`
+//   // remove the file after finishing up with it
+//   unlinkSync(req.file.path)
+//   res.json({ cloudinaryUrl })
+// })
 
 app.use('/api-v1/users', require('./controllers/api-v1/users'))
 // listen on a port

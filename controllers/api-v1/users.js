@@ -126,6 +126,7 @@ router.post('/', uploads.single('image'), async (req, res) => {
     // delete the file so it doesnt clutter up the server folder
     unlinkSync(req.file.path)
     // save url to db
+    // console.log(req.body)
 
     res.json({ cloudImage })
   } catch (err) {

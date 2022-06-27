@@ -145,7 +145,7 @@ router.delete('/:id', async (req, res) => {
 })
 
 // POST upload data, adds a new picture to user
-router.post('/', uploads.single('image'), async (req, res) => {
+router.post('/:id/pictures', uploads.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ msg: 'no file uploaded' })
     // upload to cloudinary
@@ -191,7 +191,7 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// GET users picture details
+// GET users picture details // tested with postman
 router.get('/picture/:pic_id', async (req, res) => {
   const pictureId = req.params.pic_id
 

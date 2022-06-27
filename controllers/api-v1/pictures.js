@@ -19,7 +19,7 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// PUT edit a user's pictures caption
+// PUT edit a user's pictures caption // tested with postman
 router.put('/:id', async (req, res) => {
   const id = req.params.id
   try {
@@ -34,7 +34,7 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// DELETE delete a picture
+// DELETE delete a picture // tested with postman
 router.delete('/:id', async (req, res) => {
   const id = req.params.id
   try {
@@ -49,7 +49,7 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-// POST add a new comment to a picture
+// POST add a new comment to a picture // tested with postman
 router.post('/:id/comment', async (req, res) => {
   const id = req.params.id
   try {

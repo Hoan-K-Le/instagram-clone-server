@@ -47,6 +47,7 @@ app.get('/', myMiddleware, (req, res) => {
 // })
 
 app.use('/api-v1/users', require('./controllers/api-v1/users'))
+app.use('/api-v1/comments', require('./controllers/api-v1/comments'))
 
 // listen on a port
 app.listen(PORT, () => {

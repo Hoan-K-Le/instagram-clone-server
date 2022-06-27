@@ -122,7 +122,7 @@ router.post('/', uploads.single('image'), async (req, res) => {
     // upload to cloudinary
     const cloudImageData = await cloudinary.uploader.upload(req.file.path)
     // png that can be manipulated
-    const cloudImage = `https://res.cloudinary.com/dshcawt4j/image/upload/v1593119998/${cloudImageData.public_id}.png`
+    const cloudImage = `https://res.cloudinary.com/${process.env.CLOUD_USER_ID}/image/upload/v1593119998/${cloudImageData.public_id}.png`
     // delete the file so it doesnt clutter up the server folder
     unlinkSync(req.file.path)
     // save url to db
@@ -132,6 +132,68 @@ router.post('/', uploads.single('image'), async (req, res) => {
   } catch (err) {
     console.warn(err)
     res.status.json(503).json({ msg: 'you should look at the server console.' })
+  }
+})
+
+// GET all users with pictures populating
+router.get('/', async (req, res) => {
+  try {
+    const allUsers = await db.User.find({}).populate({
+      path: 'pictures',
+    })
+
+    res.json(allUsers)
+  } catch (err) {
+    console.warn(err)
+  }
+})
+
+// GET a specific user with pictures populating
+router.get('/:id', async (req, res) => {
+  const id = req.params.id
+  try {
+    const foundUser = await db.User.findById(id).populate({
+      path: 'pictures',
+    })
+
+    res.json(foundUser)
+  } catch (err) {
+    console.warn(err)
+  }
+})
+
+// GET users picture details
+router.get('/:pic_id', async (req, res) => {
+  const id = req.params.id
+  try {
+    const foundPicture = await db.Picture.findById(id).populate({
+      path: 'comments',
+    })
+
+    res.json(foundPicture)
+  } catch (err) {
+    console.warn(err)
+  }
+})
+
+// POST add a new comment to a picture
+router.post('/:pic_id/comment', async (req, res) => {
+  const id = req.params.id
+  try {
+    const foundPicture = await db.Picture.findById(id).populate({
+      path: 'comments',
+    })
+    const newComment = await db.Comment.create(req.body)
+
+    foundPicture.comments.push(newComment)
+    newComment.picture = foundPicture
+
+    await foundPicture.save()
+    await newComment.save()
+
+    res.status(201).json(newComment)
+  } catch (err) {
+    console.warn(err)
   }
 })
 

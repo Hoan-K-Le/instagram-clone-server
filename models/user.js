@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose')
+const mongoose = require('mongoose')
 
 const UserSchema = new mongoose.Schema(
   {
@@ -14,6 +14,12 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    pictures: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Picture',
+      },
+    ],
   },
   {
     timestamps: true,

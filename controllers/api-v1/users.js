@@ -151,7 +151,7 @@ router.post('/:id/pictures', uploads.single('image'), async (req, res) => {
     // upload to cloudinary
     const cloudImageData = await cloudinary.uploader.upload(req.file.path)
     // png that can be manipulated
-    const cloudImage = `https://res.cloudinary.com/${process.env.CLOUD_USER_ID}/image/upload/v1593119998/${cloudImageData.public_id}.png`
+    const cloudImage = `https://res.cloudinary.com/dshcawt4j/image/upload/v1593119998/${cloudImageData.public_id}.png`
     // delete the file so it doesnt clutter up the server folder
     unlinkSync(req.file.path)
     // save url to db

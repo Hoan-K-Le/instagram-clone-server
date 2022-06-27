@@ -115,7 +115,36 @@ router.get('/auth-locked', authLockedRoute, (req, res) => {
   res.json({ msg: 'welcome to the secret auth-locked route' })
 })
 
-// upload data
+// PUT edit user account details // tested in postman
+router.put('/:id', async (req, res) => {
+  const id = req.params.id
+  try {
+    const foundUser = await db.User.findByIdAndUpdate(id, req.body, {
+      new: true,
+    })
+
+    res.status(201).json(foundUser)
+  } catch (err) {
+    console.warn(err)
+    res
+      .status(500)
+      .json({ msg: 'Something went wrong with updating your account details' })
+  }
+})
+
+// DELETE profile // tested on postman
+router.delete('/:id', async (req, res) => {
+  const id = req.params.id
+  try {
+    await db.User.findByIdAndDelete(id)
+
+    res.status(204)
+  } catch (err) {
+    console.warn(err)
+  }
+})
+
+// POST upload data, adds a new picture to user
 router.post('/', uploads.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ msg: 'no file uploaded' })
@@ -135,7 +164,7 @@ router.post('/', uploads.single('image'), async (req, res) => {
   }
 })
 
-// GET all users with pictures populating
+// GET all users with pictures populating // tested on postman
 router.get('/', async (req, res) => {
   try {
     const allUsers = await db.User.find({}).populate({
@@ -148,7 +177,7 @@ router.get('/', async (req, res) => {
   }
 })
 
-// GET a specific user with pictures populating
+// GET a specific user with pictures populating // tested in postman
 router.get('/:id', async (req, res) => {
   const id = req.params.id
   try {
@@ -163,16 +192,50 @@ router.get('/:id', async (req, res) => {
 })
 
 // GET users picture details
-router.get('/:pic_id', async (req, res) => {
-  const id = req.params.id
+router.get('/picture/:pic_id', async (req, res) => {
+  const pictureId = req.params.pic_id
+
   try {
-    const foundPicture = await db.Picture.findById(id).populate({
+    const foundPicture = await db.Picture.findById(pictureId).populate({
       path: 'comments',
     })
 
     res.json(foundPicture)
   } catch (err) {
     console.warn(err)
+    res
+      .status(500)
+      .json({ msg: 'Something went wrong when fetching picture details' })
+  }
+})
+
+// PUT edit a user's pictures caption
+router.put('/:pic_id', async (req, res) => {
+  const id = req.params.pic_id
+  try {
+    const foundPicture = await db.Picture.findByIdAndUpdate(id, req.body, {
+      new: true,
+    })
+
+    res.status(201).json(foundPicture)
+  } catch (err) {
+    console.warn(err)
+    res.status(500).json(err)
+  }
+})
+
+// DELETE delete a picture
+router.delete('/:pic_id', async (req, res) => {
+  const id = req.params.pic_id
+  try {
+    await db.Picture.findByIdAndDelete(id)
+
+    res.status(204).json({ msg: 'Picture has been deleted' })
+  } catch (err) {
+    console.warn(err)
+    res
+      .status(500)
+      .json({ msg: 'Something went wrong with deleting the picture' })
   }
 })
 

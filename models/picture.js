@@ -6,6 +6,7 @@ const PictureSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    content: String,
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

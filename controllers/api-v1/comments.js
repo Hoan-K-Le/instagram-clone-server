@@ -27,7 +27,9 @@ router.delete('/:id', async (req, res) => {
     res.status(204)
   } catch (err) {
     console.warn(err)
-    res.status(500).json('something went wrong with deleting the comment')
+    res
+      .status(500)
+      .json({ msg: 'something went wrong with deleting the comment' })
   }
 })
 

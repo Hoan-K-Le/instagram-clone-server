@@ -119,9 +119,19 @@ router.get('/auth-locked', authLockedRoute, (req, res) => {
 router.put('/:id', async (req, res) => {
   const id = req.params.id
   try {
-    const foundUser = await db.User.findByIdAndUpdate(id, req.body, {
-      new: true,
-    })
+    const foundUser = await db.User.findById(id)
+
+    // hash the user's pass
+    const password = req.body.password
+    const salts = 12
+    const hashedPassword = await bcrypt.hash(password, salts)
+
+    // create a new values with hashed password
+    foundUser.name = req.body.name
+    foundUser.email = req.body.email
+    foundUser.password = hashedPassword
+
+    await foundUser.save()
 
     res.status(201).json(foundUser)
   } catch (err) {

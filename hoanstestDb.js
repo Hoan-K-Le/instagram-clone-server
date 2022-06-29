@@ -13,11 +13,11 @@ const db = require('./models')
 
 const userCrud = async () => {
   try {
-    // const newUser = await db.User.create({
-    //   name: 'Amy-chan',
-    //   email: 'amy@dietgames.com',
-    //   password: '123456',
-    // })
+    const newUser = await db.User.create({
+      name: 'davis-killesssr',
+      email: 'davis@dietgames.com',
+      password: '123',
+    })
     
     const foundUser = await db.User.findOne({}).populate({ path: 'pictures' })
     

@@ -148,7 +148,7 @@ router.delete('/:id', async (req, res) => {
   try {
     await db.User.findByIdAndDelete(id)
 
-    res.status(204)
+    res.status(204).redirect('/')
   } catch (err) {
     console.warn(err)
   }

@@ -156,6 +156,7 @@ router.delete('/:id', async (req, res) => {
 
 // POST upload data, adds a new picture to user
 router.post('/:id/pictures', uploads.single('image'), async (req, res) => {
+  const id = req.params.id
   try {
     if (!req.file) return res.status(400).json({ msg: 'no file uploaded' })
     // upload to cloudinary
@@ -166,6 +167,18 @@ router.post('/:id/pictures', uploads.single('image'), async (req, res) => {
     unlinkSync(req.file.path)
     // save url to db
     // console.log(req.body)
+
+    const foundUser = await db.User.findById(id)
+    const newPicture = await db.Picture.create({
+      cloudId: cloudImageData.public_id,
+      caption: '',
+    })
+    // console.log(foundUser)
+    foundUser.pictures.push(newPicture)
+    newPicture.user = foundUser
+
+    await foundUser.save()
+    await newPicture.save()
 
     res.json({ cloudImage })
   } catch (err) {

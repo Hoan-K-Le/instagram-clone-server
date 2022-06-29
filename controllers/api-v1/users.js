@@ -121,19 +121,32 @@ router.put('/:id', async (req, res) => {
   try {
     const foundUser = await db.User.findById(id)
 
+
     // hash the user's pass
     const password = req.body.password
     const salts = 12
     const hashedPassword = await bcrypt.hash(password, salts)
+
+
 
     // create a new values with hashed password
     foundUser.name = req.body.name
     foundUser.email = req.body.email
     foundUser.password = hashedPassword
 
+    // jwt token for log in in
+       const payload = {
+      name: foundUser.name,
+      email: foundUser.email,
+      id: foundUser.id,
+    }
+    // sign the jwt and send it back
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    })
+    
     await foundUser.save()
-
-    res.status(201).json(foundUser)
+    res.status(201).json({token})
   } catch (err) {
     console.warn(err)
     res
@@ -148,7 +161,7 @@ router.delete('/:id', async (req, res) => {
   try {
     await db.User.findByIdAndDelete(id)
 
-    res.status(204)
+    res.status(204).redirect('/')
   } catch (err) {
     console.warn(err)
   }

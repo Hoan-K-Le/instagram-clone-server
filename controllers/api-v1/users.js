@@ -121,13 +121,10 @@ router.put('/:id', async (req, res) => {
   try {
     const foundUser = await db.User.findById(id)
 
-
     // hash the user's pass
     const password = req.body.password
     const salts = 12
     const hashedPassword = await bcrypt.hash(password, salts)
-
-
 
     // create a new values with hashed password
     foundUser.name = req.body.name
@@ -135,7 +132,7 @@ router.put('/:id', async (req, res) => {
     foundUser.password = hashedPassword
 
     // jwt token for log in in
-       const payload = {
+    const payload = {
       name: foundUser.name,
       email: foundUser.email,
       id: foundUser.id,
@@ -144,9 +141,9 @@ router.put('/:id', async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: '1d',
     })
-    
+
     await foundUser.save()
-    res.status(201).json({token})
+    res.status(201).json({ token })
   } catch (err) {
     console.warn(err)
     res
@@ -192,6 +189,31 @@ router.post('/:id/pictures', uploads.single('image'), async (req, res) => {
 
     await foundUser.save()
     await newPicture.save()
+
+    res.json({ cloudImage })
+  } catch (err) {
+    console.warn(err)
+    res.status.json(503).json({ msg: 'you should look at the server console.' })
+  }
+})
+
+// POST a profile picture
+router.post('/:id/picture', uploads.single('image'), async (req, res) => {
+  const id = req.params.id
+  try {
+    if (!req.file) return res.status(400).json({ msg: 'no file uploaded' })
+    // upload to cloudinary
+    const cloudImageData = await cloudinary.uploader.upload(req.file.path)
+    // png that can be manipulated
+    const cloudImage = `https://res.cloudinary.com/dshcawt4j/image/upload/v1593119998/${cloudImageData.public_id}.png`
+    // delete the file so it doesnt clutter up the server folder
+    unlinkSync(req.file.path)
+    // save url to db
+    // console.log(req.body)
+
+    const foundUser = await db.User.findByIdAndUpdate(id, {
+      profilePicture: cloudImageData.public_id,
+    })
 
     res.json({ cloudImage })
   } catch (err) {

@@ -90,6 +90,7 @@ router.post('/login', async (req, res) => {
       name: foundUser.name,
       email: foundUser.email,
       id: foundUser.id,
+      profilePicture: foundUser.profilePicture,
     }
     // sign the jwt and send it back
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -136,6 +137,7 @@ router.put('/:id', async (req, res) => {
       name: foundUser.name,
       email: foundUser.email,
       id: foundUser.id,
+      profilePicture: foundUser.profilePicture,
     }
     // sign the jwt and send it back
     const token = jwt.sign(payload, process.env.JWT_SECRET, {

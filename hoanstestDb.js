@@ -22,7 +22,7 @@ const userCrud = async () => {
     const foundUser = await db.User.findOne({}).populate({ path: 'pictures' })
     
     const newPicture = await db.Picture.create({
-        cloudId: '123456',
+        cloudId: '123456',  
     })
     // newUser.save()
 
